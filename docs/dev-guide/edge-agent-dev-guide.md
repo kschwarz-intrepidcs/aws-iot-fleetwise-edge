@@ -1348,11 +1348,11 @@ Customers can set the System level logging severity externally via the software 
 |                          | interfaceId                                 | Every OBD signal decoder is associated with a OBD network interface using a unique Id                                     | string   |
 |                          | type                                        | Specifies if the interface carries CAN or OBD signals over this channel, this will be OBD for a OBD network interface     | string   |
 | bufferSizes              | dtcBufferSize                               | Max size of the buffer shared between data collection module (Collection Engine) and Vehicle Data Consumer. This is a single producer single consumer buffer.                                                                                                                                                                                                                      | integer  |
-|                          | socketCANBufferSize                         | Max size of the circular buffer associated with a network channel (CAN Bus) for data consumption from that channel. This is a single producer-single consumer buffer.                                                                                                                                                                                                                 | integer  |
+|                          | canInterfaceBufferSize                         | Max size of the circular buffer associated with a network channel (CAN Bus) for data consumption from that channel. This is a single producer-single consumer buffer.                                                                                                                                                                                                                 | integer  |
 |                          | decodedSignalsBufferSize                    | Max size of the buffer shared between data collection module (Collection Engine) and Vehicle Data Consumer for OBD and CAN signals. This buffer receives the raw packets from the Vehicle Data e.g. CAN bus and stores the decoded/filtered data according to the signal decoding information provided in decoder manifest. This is a multiple producer single consumer buffer. | integer  |
 |                          | rawCANFrameBufferSize                       | Max size of the buffer shared between Vehicle Data Consumer and data collection module (Collection Engine). This buffer stores raw CAN frames coming in from the CAN Bus. This is a lock-free multi-producer single consumer buffer.                                                                                                                                               | integer  |
 | threadIdleTimes          | inspectionThreadIdleTimeMs                  | Sleep time for inspection engine thread if no new data is available (in milliseconds)                                     | integer  |
-|                          | socketCANThreadIdleTimeMs                   | Sleep time for CAN interface if no new data is available (in milliseconds)                                                | integer  |
+|                          | canInterfaceThreadIdleTimeMs                   | Sleep time for CAN interface if no new data is available (in milliseconds)                                                | integer  |
 |                          | canDecoderThreadIdleTimeMs                  | Sleep time for CAN decoder thread if no new data is available (in milliseconds)                                           | integer  |
 | persistency              | persistencyPath                             | Local storage path to persist Collection Scheme, decoder manifest and data snapshot                                       | string   |
 |                          | persistencyPartitionMaxSize                 | Maximum size allocated for persistency (Bytes)                                                                            | integer  |
@@ -1548,13 +1548,13 @@ The following documents or websites provide more information about AWS IoT Fleet
   "staticConfig": {
     "bufferSizes": {
       "dtcBufferSize": 100,
-      "socketCANBufferSize": 10000,
+      "canInterfaceBufferSize": 10000,
       "decodedSignalsBufferSize": 10000,
       "rawCANFrameBufferSize": 10000
     },
     "threadIdleTimes": {
       "inspectionThreadIdleTimeMs": 50,
-      "socketCANThreadIdleTimeMs": 50,
+      "canInterfaceThreadIdleTimeMs": 50,
       "canDecoderThreadIdleTimeMs": 50
     },
     "persistency": {

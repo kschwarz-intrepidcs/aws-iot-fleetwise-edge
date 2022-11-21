@@ -24,13 +24,13 @@
     "staticConfig": {
         "bufferSizes": {
             "dtcBufferSize": 100,
-            "socketCANBufferSize": 10000,
+            "canInterfaceBufferSize": 10000,
             "decodedSignalsBufferSize": 10000,
             "rawCANFrameBufferSize": 10000
         },
         "threadIdleTimes": {
             "inspectionThreadIdleTimeMs": 50,
-            "socketCANThreadIdleTimeMs": 50,
+            "canInterfaceThreadIdleTimeMs": 50,
             "canDecoderThreadIdleTimeMs": 50
         },
         "persistency": {

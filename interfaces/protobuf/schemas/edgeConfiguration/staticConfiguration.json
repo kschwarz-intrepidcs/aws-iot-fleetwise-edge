@@ -137,7 +137,7 @@
                             "type": "integer",
                             "description": "Max size of the buffer shared between data collection module (Collection Engine) and Network Channel Consumer. This is a single producer single consumer buffer."
                         },
-                        "socketCANBufferSize": {
+                        "canInterfaceBufferSize": {
                             "type": "integer",
                             "description": "Max size of the circular buffer associated with a network channel (CAN Bus) for data consumption from that channel. This is a single producer-single consumer buffer."
                         },
@@ -152,7 +152,7 @@
                     },
                     "required": [
                         "dtcBufferSize",
-                        "socketCANBufferSize",
+                        "canInterfaceBufferSize",
                         "decodedSignalsBufferSize",
                         "rawCANFrameBufferSize"
                     ]
@@ -165,7 +165,7 @@
                             "type": "integer",
                             "description": "Sleep time for inspection engine thread if no new data is available (in milliseconds)"
                         },
-                        "socketCANThreadIdleTimeMs": {
+                        "canInterfaceThreadIdleTimeMs": {
                             "type": "integer",
                             "description": "Sleep time for CAN interface if no new data is available (in milliseconds)"
                         },
@@ -176,7 +176,7 @@
                     },
                     "required": [
                         "inspectionThreadIdleTimeMs",
-                        "socketCANThreadIdleTimeMs",
+                        "canInterfaceThreadIdleTimeMs",
                         "canDecoderThreadIdleTimeMs"
                     ]
                 },

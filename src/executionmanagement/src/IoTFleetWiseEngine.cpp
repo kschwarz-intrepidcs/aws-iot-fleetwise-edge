@@ -393,9 +393,9 @@ IoTFleetWiseEngine::connect( const Json::Value &config )
                     "protocolName", interfaceName[CAN_INTERFACE_TYPE]["protocolName"].asString() );
                 canSourceConfig.transportProperties.emplace(
                     "threadIdleTimeMs",
-                    config["staticConfig"]["threadIdleTimes"]["socketCANThreadIdleTimeMs"].asString() );
+                    config["staticConfig"]["threadIdleTimes"]["canInterfaceThreadIdleTimeMs"].asString() );
                 canSourceConfig.maxNumberOfVehicleDataMessages =
-                    config["staticConfig"]["bufferSizes"]["socketCANBufferSize"].asUInt();
+                    config["staticConfig"]["bufferSizes"]["canInterfaceBufferSize"].asUInt();
                 CAN_TIMESTAMP_TYPE canTimestampType = CAN_TIMESTAMP_TYPE::KERNEL_SOFTWARE_TIMESTAMP; // default
                 if ( interfaceName[CAN_INTERFACE_TYPE].isMember( "timestampType" ) )
                 {
