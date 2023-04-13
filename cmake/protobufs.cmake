@@ -3,7 +3,7 @@
 # This generates protobuf library for proto files in another package
 # Consumers need only declare the libraryAliasName in their target_link_libraries
 
-find_package(Protobuf REQUIRED)
+find_package(protobuf REQUIRED)
 
 set(CMAKE_CXX_CLANG_TIDY "")
 
