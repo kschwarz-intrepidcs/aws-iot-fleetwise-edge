@@ -10,6 +10,7 @@ set(SRCS
   src/ISOTPOverCANReceiver.cpp
   src/ISOTPOverCANSender.cpp
   src/ISOTPOverCANSenderReceiver.cpp
+  $<$<BOOL:${FWE_LIBICSNEO}>:src/ICSNEOCANDataSource.cpp>
   # Camera related
   $<$<BOOL:${FWE_FEATURE_CAMERA}>:src/CameraDataSubscriber.cpp>
   $<$<BOOL:${FWE_FEATURE_CAMERA}>:src/CameraDataPublisher.cpp>
@@ -25,7 +26,7 @@ add_library(
 # Adding the include directory which contains two subdirectories. Users of this
 # library will have to use the subdirectory name to include headers from this
 # library, for example: #include "businterfaces/VehicleDataSource.h"
-target_include_directories(${libraryTargetName} PUBLIC include)
+target_include_directories(${libraryTargetName} PUBLIC include $<$<BOOL:${FWE_LIBICSNEO}>:${LIBICSNEO_INCLUDE_DIR}>)
 
 find_package(Boost 1.65.1 REQUIRED COMPONENTS thread)
 if(FWE_FEATURE_CAMERA)
@@ -36,6 +37,7 @@ endif()
 set(LIBS
   IoTFleetWise::Platform::Linux
   IoTFleetWise::Platform::Utility
+  $<$<BOOL:${FWE_LIBICSNEO}>:${LIBICSNEO_LIBRARIES}>
   Boost::thread
   $<$<BOOL:${FWE_FEATURE_CAMERA}>:IoTFleetWise::Idls>
   $<$<BOOL:${FWE_FEATURE_CAMERA}>:fastrtps>

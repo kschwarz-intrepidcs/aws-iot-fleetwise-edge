@@ -19,6 +19,9 @@
         },
         {
           "required": ["obdInterface"]
+        },
+        {
+          "required": ["icsneoCANInterface"]
         }
       ],
       "properties": {
@@ -36,6 +39,14 @@
           "description": "OBD Signal network interface information",
           "items": {
             "$ref": "#/definitions/obdInterface"
+          }
+        },
+        "icsneoCANInterface": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "ICSNEO CAN Signal network interface information",
+          "items": {
+            "$ref": "#/definitions/icsneoCANInterface"
           }
         },
         "interfaceId": {
@@ -96,6 +107,15 @@
               "description": "Specifies whether OBD requests should be sent in broadcast (functional) mode, rather than the unicast (physical) mode"
             }
           },
+          "icsneoCANInterface": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "interfaceName": {
+                "type": "string",
+                "description": "Interface name for CAN channel"
+              }
+            },
           "required": [
             "interfaceName",
             "obdStandard",

@@ -6,8 +6,9 @@ project(iotfleetwise VERSION 1.0.4)
 
 # AWS IoT FleetWise Edge uses C++14 for compatibility reasons with
 # Automotive middlewares ( Adaptive AUTOSAR, ROS2)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 message(STATUS "Hello from the AWS IoT FleetWise build system!")
 
@@ -27,6 +28,7 @@ option(FWE_TEST_FAKETIME "Enable tests that use the faketime library" OFF)
 option(FWE_SECURITY_COMPILE_FLAGS "Add security related compile options" OFF)
 option(FWE_AWS_SDK_SHARED_LIBS "Use AWS SDK shared libs. Needs to be set to the same value of BUILD_SHARED_LIBS that the SDK was compiled with." OFF)
 option(FWE_AWS_SDK_EXTRA_LIBS "Extra libs required to link with the AWS SDK. When FWE_STATIC_LINK is ON, setting this to ON will automatically find the standard libs. Can be a space-separated list of libs." ON)
+option(FWE_LIBICSNEO "Enable libicsneo for Intrepid Control Systems hardware" OFF)
 option(FWE_EXAMPLE_IWAVEGPS "Include the IWave GPS example for a custom data source" OFF)
 if(FWE_EXAMPLE_IWAVEGPS)
   add_compile_options("-DFWE_EXAMPLE_IWAVEGPS")
@@ -51,6 +53,9 @@ include(cmake/valgrind.cmake)
 include(cmake/clang_tidy.cmake)
 if(FWE_BUILD_DOC)
   include(cmake/doxygen.cmake)
+endif()
+if(FWE_LIBICSNEO)
+  include(cmake/libicsneo.cmake)
 endif()
 
 add_subdirectory(src)

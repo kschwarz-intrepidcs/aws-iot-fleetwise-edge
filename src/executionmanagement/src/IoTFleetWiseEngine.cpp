@@ -10,6 +10,7 @@
 #include "TraceModule.h"
 #include "businterfaces/AbstractVehicleDataSource.h"
 #include "businterfaces/CANDataSource.h"
+#include "businterfaces/ICSNEOCANDataSource.h"
 #include <boost/lockfree/spsc_queue.hpp>
 #include <fstream>
 
@@ -30,6 +31,7 @@ const uint64_t IoTFleetWiseEngine::DEFAULT_RETRY_UPLOAD_PERSISTED_INTERVAL_MS = 
 
 static const std::string CAN_INTERFACE_TYPE = "canInterface";
 static const std::string OBD_INTERFACE_TYPE = "obdInterface";
+static const std::string ICSNEO_CAN_INTERFACE_TYPE = "icsneoCANInterface";
 
 namespace
 {
@@ -110,7 +112,8 @@ IoTFleetWiseEngine::connect( const Json::Value &config )
         // Initialize
         for ( const auto &interfaceName : config["networkInterfaces"] )
         {
-            if ( interfaceName["type"].asString() == CAN_INTERFACE_TYPE )
+            const auto& typeName = interfaceName["type"].asString();
+            if ( typeName == CAN_INTERFACE_TYPE || typeName == ICSNEO_CAN_INTERFACE_TYPE )
             {
                 canIDTranslator.add( interfaceName["interfaceId"].asString() );
             }
@@ -448,6 +451,60 @@ IoTFleetWiseEngine::connect( const Json::Value &config )
                 else
                 {
                     FWE_LOG_ERROR( "obdOverCANModule already initialised" );
+                }
+            }
+            else if ( interfaceType == ICSNEO_CAN_INTERFACE_TYPE )
+            {
+                std::vector<VehicleDataSourceConfig> canSourceConfigs( 1 );
+                auto &canSourceConfig = canSourceConfigs.back();
+                canSourceConfig.transportProperties.emplace(
+                    "interfaceName", interfaceName[ICSNEO_CAN_INTERFACE_TYPE]["interfaceName"].asString() );
+                canSourceConfig.transportProperties.emplace(
+                    "threadIdleTimeMs",
+                    config["staticConfig"]["threadIdleTimes"]["canInterfaceThreadIdleTimeMs"].asString() );
+                canSourceConfig.maxNumberOfVehicleDataMessages =
+                    config["staticConfig"]["bufferSizes"]["canInterfaceBufferSize"].asUInt();
+                auto canSourcePtr = std::make_shared<ICSNEOCANDataSource>();
+                auto canConsumerPtr = std::make_shared<CANDataConsumer>();
+
+                if ( canSourcePtr == nullptr || canConsumerPtr == nullptr )
+                {
+                    FWE_LOG_ERROR( "Failed to create consumer/producer" );
+                    return false;
+                }
+                // Initialize the consumer/producers
+                // Currently we limit 1 channel to a single consumer. We can always extend this
+                // if we want to process the data coming from 1 channel to multiple consumers.
+                if ( !canSourcePtr->init( canSourceConfigs ) ||
+                     !canConsumerPtr->init(
+                         static_cast<VehicleDataSourceID>(
+                             canIDTranslator.getChannelNumericID( interfaceName["interfaceId"].asString() ) ),
+                         signalBufferPtr,
+                         config["staticConfig"]["threadIdleTimes"]["canDecoderThreadIdleTimeMs"].asUInt() ) )
+                {
+                    FWE_LOG_ERROR( "Failed to initialize the producers/consumers" );
+                    return false;
+                }
+                else
+                {
+                    // CAN Consumers require a RAW Buffer after init
+                    // TODO: This is temporary change . Will need to think how this can be abstracted for all data
+                    // sources.
+                    canConsumerPtr->setCANBufferPtr( canRawBufferPtr );
+                }
+
+                // Handshake the binder and the channel
+                if ( !mVehicleDataSourceBinder->addVehicleDataSource( canSourcePtr ) )
+                {
+                    FWE_LOG_ERROR( "Failed to add a network channel" );
+                    return false;
+                }
+
+                if ( !mVehicleDataSourceBinder->bindConsumerToVehicleDataSource(
+                         canConsumerPtr, canSourcePtr->getVehicleDataSourceID() ) )
+                {
+                    FWE_LOG_ERROR( "Failed to Bind Consumers to Producers" );
+                    return false;
                 }
             }
             else
